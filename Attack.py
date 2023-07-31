@@ -104,15 +104,17 @@ for epoch in range(args.epochs):
         label = label.cuda()
         output = model(image)
         _, predicted = torch.max(output.data, 1)
-        if predicted[0] != label and predicted[0].data.cpu().numpy() != args.target:
-             train_actual_total += 1
-             applied_patch, mask, x_location, y_location = mask_generation(args.patch_type, patch, image_size=(3, 224, 224))
+        if predicted[0] != label and predicted[0].data.cpu().numpy() != args.target:#如果预测的结果不是目标类
+             train_actual_total += 1 # 实际训练次数++
+             applied_patch, mask, x_location, y_location = mask_generation(args.patch_type, patch, image_size=(3, 224, 224)) # 生成修剪过的patch和mask
+             # 把patch应用到image上
              perturbated_image, applied_patch = patch_attack(image, applied_patch, mask, args.target, args.probability_threshold, model, args.lr, args.max_iteration)
              perturbated_image = torch.from_numpy(perturbated_image).cuda()
              output = model(perturbated_image)
              _, predicted = torch.max(output.data, 1)
              if predicted[0].data.cpu().numpy() == args.target:
                  train_success += 1
+             # 更新一下patch
              patch = applied_patch[0][:, x_location:x_location + patch.shape[1], y_location:y_location + patch.shape[2]]
     mean, std = [0.485, 0.456, 0.406], [0.229, 0.224, 0.225]
     plt.imshow(np.clip(np.transpose(patch, (1, 2, 0)) * std + mean, 0, 1))
