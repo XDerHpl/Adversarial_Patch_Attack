@@ -7,6 +7,7 @@ import torch
 
 # Initialize the patch
 # TODO: Add circle type
+# 生成一个制定大小的正方形随机噪声patch，不能指定形状
 def patch_initialization(patch_type='rectangle', image_size=(3, 224, 224), noise_percentage=0.03):
     if patch_type == 'rectangle':
         mask_length = int((noise_percentage * image_size[1] * image_size[2])**0.5)
@@ -15,18 +16,23 @@ def patch_initialization(patch_type='rectangle', image_size=(3, 224, 224), noise
 
 # Generate the mask and apply the patch
 # TODO: Add circle type
+# 生成掩码并且应用patc
 def mask_generation(mask_type='rectangle', patch=None, image_size=(3, 224, 224)):
+    #applied_patch 初始化为全0
     applied_patch = np.zeros(image_size)
     if mask_type == 'rectangle':
         # patch rotation
+        # 旋转 90 180 270 360度
         rotation_angle = np.random.choice(4)
         for i in range(patch.shape[0]):
             patch[i] = np.rot90(patch[i], rotation_angle)  # The actual rotation angle is rotation_angle * 90
         # patch location
         x_location, y_location = np.random.randint(low=0, high=image_size[1]-patch.shape[1]), np.random.randint(low=0, high=image_size[2]-patch.shape[2])
         for i in range(patch.shape[0]):
+            # 把patch的mask范围内的值赋值给applied_patch
             applied_patch[:, x_location:x_location + patch.shape[1], y_location:y_location + patch.shape[2]] = patch
     mask = applied_patch.copy()
+    #把mask非0区域内的所有数值改为1.0
     mask[mask != 0] = 1.0
     return applied_patch, mask, x_location, y_location
 
