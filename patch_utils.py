@@ -22,7 +22,8 @@ def mask_generation(mask_type='rectangle', patch=None, image_size=(3, 224, 224))
     applied_patch = np.zeros(image_size)
     if mask_type == 'rectangle':
         # patch rotation
-        # 旋转 90 180 270 360度
+        # 旋转 90 180 270 360度, 三个通道都旋转一下
+        # 注意，patch的形状是正方形
         rotation_angle = np.random.choice(4)
         for i in range(patch.shape[0]):
             patch[i] = np.rot90(patch[i], rotation_angle)  # The actual rotation angle is rotation_angle * 90
