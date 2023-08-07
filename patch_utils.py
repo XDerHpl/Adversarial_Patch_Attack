@@ -31,6 +31,8 @@ def mask_generation(mask_type='rectangle', patch=None, image_size=(3, 224, 224))
         x_location, y_location = np.random.randint(low=0, high=image_size[1]-patch.shape[1]), np.random.randint(low=0, high=image_size[2]-patch.shape[2])
         for i in range(patch.shape[0]):
             # 把patch的mask范围内的值赋值给applied_patch
+            # 注意，applied_patch的初始值是全0，因此这种赋值方法可取
+            # applied_patch的大小是img_size，patch的大小取决于img_size和noise_percentage，比img_size小
             applied_patch[:, x_location:x_location + patch.shape[1], y_location:y_location + patch.shape[2]] = patch
     mask = applied_patch.copy()
     #把mask非0区域内的所有数值改为1.0
