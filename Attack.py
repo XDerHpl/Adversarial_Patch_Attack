@@ -114,7 +114,7 @@ for epoch in range(args.epochs):
              _, predicted = torch.max(output.data, 1)
              if predicted[0].data.cpu().numpy() == args.target:
                  train_success += 1
-             # 更新一下patch
+             # 更新一下patch，保持形状不变。
              patch = applied_patch[0][:, x_location:x_location + patch.shape[1], y_location:y_location + patch.shape[2]]
     mean, std = [0.485, 0.456, 0.406], [0.229, 0.224, 0.225]
     plt.imshow(np.clip(np.transpose(patch, (1, 2, 0)) * std + mean, 0, 1))
